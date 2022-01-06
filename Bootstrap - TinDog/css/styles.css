@@ -1,0 +1,131 @@
+/* 
+================
+NOTAS: 
+
+Métodos para seleccionar diferentes elementos:
+    - Elementos (h1, h2, h3): Nombre del elemento
+    - Clases (class = ...): Punto (.)
+    - IDs (id = ...): Numeral (#)
+
+================
+*/
+
+/* 
+================
+ELEMENTOS
+================
+*/
+
+body {
+    font-family: 'Montserrat', sans-serif;
+}
+
+h1 {  
+    font-size: 3.5rem;  
+    line-height: 1.5;  
+    font-weight: 900;
+    padding: 20px 0;
+}
+
+h3 {
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+p {
+    color: #8f8f8f;
+}
+
+
+/* 
+================
+CLASES
+================
+*/
+
+/* 
+---------------------
+Sección: Título 
+---------------------
+*/
+
+/* Contenedor Título */
+.container-fluid {
+    /* Padding arriba/abajo e izquierdo/derecho */
+    padding: 3% 15%; 
+}
+
+/* Título de marca */
+.navbar-brand {
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 500;
+}
+
+/* Items de navbar */
+.nav-item {
+    padding: 0 18px;
+}
+
+/* Navbar completa */
+.navbar {
+    padding-bottom: 4.5rem;
+}
+
+/* El link asociado a cada item del navbar */
+.nav-link {
+    font-family: 'Montserrat';
+    font-weight: 300;
+    font-size: 1.2rem; 
+}
+
+/* Botones de descarga */
+.download-button {
+    margin: 5% 3% 5% 0;
+}
+
+/* Imagen de perrito en teléfono */
+.title-image {
+    width: 60%;
+    transform: rotate(25deg);
+}
+
+/* 
+---------------------
+Sección: Features
+---------------------
+*/
+
+.feature-box {
+    padding: 5%;
+    text-align: center;
+}
+
+.feature-icon {
+    color: #EF8172;
+    margin-bottom: 1rem;
+}
+
+.feature-icon:hover {
+    color: #FF4C68;
+}
+
+
+/* 
+================
+IDs 
+================
+*/
+
+#title {
+    background-color: #FF4C68;
+    color: white;
+    height: 800px;
+
+    /* Corta el contenido que se sale de la sección */
+    overflow: hidden; 
+}
+
+#features {
+    padding: 7% 15%;
+}
