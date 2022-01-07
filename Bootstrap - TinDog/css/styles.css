@@ -1,11 +1,22 @@
 /* 
 ================
-NOTAS: 
+NOTAS:
+
+Usar clases en la mayor parte de casos. Los IDs se usan solo para elementos únicos como secciones.
 
 Métodos para seleccionar diferentes elementos:
     - Elementos (h1, h2, h3): Nombre del elemento
     - Clases (class = ...): Punto (.)
     - IDs (id = ...): Numeral (#)
+
+Selectores
+    - Selectores Múltiples: Separar con coma (Aplicar mismo estilo a múltiples elementos)
+    - Selectores Jerarquicos: Separar con espacio (Seleccionar elementos dentro de otros)
+    - Selectores Combinados: Sin espacios (Selecciona todos los elementos con un ID o clase específico)
+
+Si cambiamos una misma propiedad con diferentes selectores, los que están hasta abajo son
+los que se aplican primero y por lo tanto, tienen prioridad. El "style" puesto directamente
+en un tag tiene prioridad sobre todas las stylesheets.
 
 ================
 */
@@ -17,19 +28,13 @@ ELEMENTOS
 */
 
 body {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Montserrat';
+    text-align: center;
 }
 
-h1 {  
-    font-size: 3.5rem;  
-    line-height: 1.5;  
-    font-weight: 900;
-    padding: 20px 0;
-}
-
-h3 {
-    font-size: 1.5rem;
-    font-weight: 900;
+/* Monstserrat bold */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
 }
 
 p {
@@ -45,19 +50,57 @@ CLASES
 
 /* 
 ---------------------
+Secciones
+---------------------
+*/
+
+.colored-section {
+    background-color: #FF4C68;
+    color: white;
+}
+
+.white-section {
+    background-color: white;
+}
+
+/* 
+---------------------
+Headings
+---------------------
+*/
+
+.big-heading {
+    font-size: 3.5rem;  
+    line-height: 1.5;  
+    font-weight: 900;   /* Monstserrat black */
+}
+
+.section-heading {
+    font-size: 3rem;
+    line-height: 1.5;
+}
+
+/* 
+---------------------
+Contenedores
+---------------------
+*/
+
+.container-fluid {
+    /* Padding arriba/abajo e izquierdo/derecho */
+    padding: 7% 15%; 
+}
+
+
+/* 
+---------------------
 Sección: Título 
 ---------------------
 */
 
-/* Contenedor Título */
-.container-fluid {
-    /* Padding arriba/abajo e izquierdo/derecho */
-    padding: 3% 15%; 
-}
-
 /* Título de marca */
 .navbar-brand {
-    font-family: 'Ubuntu', sans-serif;
+    font-family: 'Ubuntu';
     font-size: 2.5rem;
     font-weight: 500;
 }
@@ -69,7 +112,7 @@ Sección: Título
 
 /* Navbar completa */
 .navbar {
-    padding-bottom: 4.5rem;
+    padding: 0 0 4.5rem;
 }
 
 /* El link asociado a cada item del navbar */
@@ -86,8 +129,10 @@ Sección: Título
 
 /* Imagen de perrito en teléfono */
 .title-image {
-    width: 60%;
+    width: 20%;
     transform: rotate(25deg);
+    position: absolute;
+    right: 30%
 }
 
 /* 
@@ -97,8 +142,7 @@ Sección: Features
 */
 
 .feature-box {
-    padding: 5%;
-    text-align: center;
+    padding: 4.5%;
 }
 
 .feature-icon {
@@ -110,6 +154,63 @@ Sección: Features
     color: #FF4C68;
 }
 
+.feature-title {
+    font-size: 1.5rem;
+}
+
+/* 
+---------------------
+Sección: Testimonials
+---------------------
+*/
+
+.testimonials-image {
+    border-radius: 100%;
+    width: 10%;
+    margin: 20px;
+}
+
+.testimonial-text {
+    font-size: 3rem;
+    line-height: 1.5;
+}
+
+/* 
+---------------------
+Sección: Press
+---------------------
+*/
+
+.press-logo {
+    width: 12%;
+    margin: 20px 20px 50px;
+}
+
+
+/* 
+---------------------
+Sección: Pricing
+---------------------
+*/
+
+.pricing-column {
+    padding: 3% 2%
+}
+
+.price-text {
+    font-size: 2.5rem;
+    line-height: 1.5;
+}
+
+/* 
+---------------------
+Sección: Footer
+---------------------
+*/
+
+.footer-icon {
+    padding: 20px 10px;
+}
 
 /* 
 ================
@@ -117,15 +218,49 @@ IDs
 ================
 */
 
-#title {
-    background-color: #FF4C68;
-    color: white;
-    height: 800px;
-
-    /* Corta el contenido que se sale de la sección */
-    overflow: hidden; 
+/* Aplicar solo al container fluid dentro de "title" */
+#title .container-fluid {
+    padding: 3% 15% 7%;
+    text-align: left;
+    /* overflow: hidden;    Corta el contenido que se sale de la sección */
 }
 
 #features {
-    padding: 7% 15%;
+    position: relative;
+    z-index: 1;  /* Para que esté sobre la imagen, aunque se puede quitar ya que la sección de "features" está luego de la imagen en el HTMl */
+}
+
+#testimonials {
+    background-color: #EF8172;
+}
+
+#press {
+    background-color: #EF8172;
+    padding-bottom: 5%;
+}
+
+#pricing {
+    padding: 15%;
+}
+
+/* 
+================
+MEDIA QUERIES
+================
+*/
+
+/* 
+Title: Solo cuando la pantalla es menor a 1028 pixeles 
+*/
+
+@media (max-width: 1028px) {
+    .title-image {
+        position: static;
+        transform: rotate(0);
+        width: 60%
+    }
+
+    #title .container-fluid{
+        text-align: center;
+    }
 }
