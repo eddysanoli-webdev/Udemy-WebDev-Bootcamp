@@ -1,0 +1,51 @@
+/* 
+================
+ELEMENTS
+================
+*/
+
+body {
+    background-color: #3C3C48;
+    color: #67D7A3;
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 400;
+}
+
+h1 {
+    font-family: 'Staatliches';
+    text-shadow: 4px 4px #000000;
+    font-weight: 400;
+}
+
+footer {
+    padding: 2%;
+    color: white;
+}
+
+/* 
+================
+CLASSES
+================
+*/
+
+.dice-container {
+    font-size: 2rem;
+    text-align: center;
+    text-shadow: 2px 2px #000000;
+    display: inline-block;      /* Make divs appear side by side */
+    margin: 5%;
+}
+
+.container {
+    text-align: center;
+}
+
+/* 
+================
+IDs
+================
+*/
+
+#title {
+    font-size: 8rem;
+}
