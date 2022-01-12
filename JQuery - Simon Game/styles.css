@@ -1,0 +1,52 @@
+body {
+    background-color: #011F3F;
+    text-align: center;
+}
+
+#level-title {
+    font-family: 'Press Start 2P', cursive;
+    color: #FEF2BF;
+    margin: 5%;
+    font-size: 3rem;
+    line-height: 1;
+    font-weight: bold;
+}
+
+.row {
+    /* Needed to center the flex grid used by bootstrap */
+    justify-content: center;
+}
+
+.game-over {
+    background-color: red;
+    opacity: 0.8;
+}
+
+.simon-button {
+    border-radius: 20%;
+    outline: 10px solid black;
+    aspect-ratio: 1;
+    width: 200px;
+    margin: 30px;
+}
+
+.pressed {
+    box-shadow: 0 0 20px white;
+    background-color: grey;
+}
+
+.green {
+    background-color: green;
+}
+
+.red {
+    background-color: red;
+}
+
+.yellow {
+    background-color: yellow;
+}
+
+.blue {
+    background-color: blue;
+}

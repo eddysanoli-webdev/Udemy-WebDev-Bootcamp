@@ -26,7 +26,7 @@ Styles in JQuery
 Unique Functionalities of JQuery
     - .hasClass(): Returns boolean when element has the specified class
 
-For more animations check for the: JQuery effects animations
+For more animations check for "JQuery effects animation"
 
 
 EXAMPLES
