@@ -1,0 +1,37 @@
+<!-- Include the header -->
+<%- include("header") %> 
+   
+   <!-- Display the date calculated on the backend -->
+    <div class="box" id="heading">     
+        <h1 class="date"><%= listTitle %></h1>
+    </div>
+
+    <!-- Tasks body -->
+    <div class="box">
+
+        <!-- To Do List -->
+        <!-- Creates a list item for each task -->
+        <!-- NOTE: EJS control flow works in a line by line basis -->
+        <ul>
+            <% tasks.forEach(task => { %>
+                <div class="item">
+                    <input type="checkbox">
+                    <p><%= task %></p>
+                </div>
+            <% }) %>
+        </ul>
+
+        <!-- Post request to send new task -->
+        <!-- - Action: Route -->
+        <!-- - Method: Post request  -->
+        <!-- - Type (Button): Submit to trigger post request -->
+        <!-- - Value (Button): Identifier for the button in the forms POST request -->
+        <!-- - Name (Button): Key for the value when its passed as a JSON after the POST request -->
+        <form action="/" method="post" class="item">
+            <input type="text" name="newTask" placeholder="New Task" autocomplete="off">
+            <button type="submit" name="list" value=<%= listTitle %> >+</button>
+        </form>
+
+    </div>
+
+<%- include("footer") %> 
