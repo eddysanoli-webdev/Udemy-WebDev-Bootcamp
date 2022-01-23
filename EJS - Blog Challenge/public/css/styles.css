@@ -1,0 +1,96 @@
+/*
+=====================
+TAGS
+=====================
+*/
+
+body {
+    font-family: 'Quicksand', sans-serif;
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: "Rubik", sans-serif;
+}
+
+h2 {
+    color: #91746c;
+}
+
+hr {
+    border: 1px solid rgb(206, 206, 206);
+}
+
+p {
+    text-align: justify;
+    text-justify: auto;
+}
+
+
+/*
+=====================
+CLASSES
+=====================
+*/
+
+/* Content preview for each post */
+.previewContent {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;              /* 3 lines before clamping the content */
+    -webkit-box-orient: vertical;       /* Clamping occurs after 3 lines, not columns or characters */
+    overflow: hidden;                   /* Hide the overflowing text */
+}
+
+/* Hyperlink for website title */
+.brand-link {
+    color: inherit; /* blue colors for links too */
+    text-decoration: inherit; /* no underline */
+}
+
+/* Hyperlink for website title on hover */
+.brand-link:hover {
+    color: inherit; /* blue colors for links too */
+    text-decoration: inherit; /* no underline */
+}
+
+.date {
+    background-image: -webkit-linear-gradient(left, #DEB1A4 0%, white 50%);
+    border-radius: 3px;
+    padding: 2px;
+}
+
+.container-fluid {
+    padding-top: 70px;
+    padding-bottom: 70px;
+}
+.navbar {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border: 0;
+    border-radius: 0;
+    margin-bottom: 0;
+    font-size: 12px;
+    letter-spacing: 5px;
+}
+.navbar-nav  li a:hover {
+    color: #5E4B46 !important;
+}
+
+.footer-padding {
+	padding-bottom: 60px;
+}
+
+.footer {
+	position: absolute;
+	text-align: center;
+	bottom: 0;
+	width: 100%;
+	height: 60px;
+	background-color: #5E4B46;
+}
+
+.footer p {
+	margin-top: 25px;
+	font-size: 12px;
+    color: #fff;
+    text-align: center;
+}
