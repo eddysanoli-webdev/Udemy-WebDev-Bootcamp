@@ -1,0 +1,51 @@
+<!-- Include the header -->
+<%- include("header") %> 
+   
+   <!-- Display the date calculated on the backend -->
+    <div class="box" id="heading">     
+        <h1 class="date"><%= listTitle %></h1>
+    </div>
+
+    <!-- Tasks body -->
+    <div class="box">
+
+        <!-- To Do List -->
+        <!-- Creates a list item for each task -->
+        <!-- NOTE: EJS control flow works in a line by line basis -->
+        <ul>
+            <% tasks.forEach(task => { %>
+
+                <form action="/delete" method="post">
+                    <div class="item">
+
+                        <!-- Form will be submitted after checking the checkbox -->
+                        <!-- - Name: Name of the parameter returned after submitting -->
+                        <!-- - Value: Value of the parameter with the previous name -->
+                        <input type="checkbox" name="checkbox" value=<%= task._id %> onChange="this.form.submit()">
+                        <p><%= task.name %></p>
+
+                    </div>
+
+                    <!-- Hidden input, made specifically just to pass information through a POST request -->
+                    <!-- NOTE: The value must be surrounded by "" or 'value="Thursday, 27"' will become 'value="Thursday," 27' -->
+                    <input type="hidden" name="listName" value="<%= listTitle %>"> 
+
+                </form>
+                
+            <% }) %>
+        </ul>
+
+        <!-- Post request to send new task -->
+        <!-- - Action: Route -->
+        <!-- - Method: Post request  -->
+        <!-- - Type (Button): Submit to trigger post request -->
+        <!-- - Value (Button): Identifier for the button in the forms POST request -->
+        <!-- - Name (Button): Key for the value when its passed as a JSON after the POST request -->
+        <form action="/" method="post" class="item">
+            <input type="text" name="newTask" placeholder="New Task" autocomplete="off">
+            <button type="submit" name="list" value="<%= listTitle %>">+</button>
+        </form>
+
+    </div>
+
+<%- include("footer") %> 
