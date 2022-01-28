@@ -1,0 +1,16 @@
+<%- include("partials/header") %>
+
+    <h1>Home</h1>
+    <p><%= initialContent %> </p>
+    <hr>
+
+    <% posts.forEach(post => { %>
+        <h2><%= post.title %> </h2>
+        <p class="date"><%= post.date %> </p>
+        <p class="previewContent"><%= post.content %> </p>
+
+        <!-- Anchor tag -->
+        <a href="posts/<%= lodash.kebabCase([string = post.title]) %>" class="readMore">Read More</a>
+    <% }) %>
+
+<%- include("partials/footer") %> 
