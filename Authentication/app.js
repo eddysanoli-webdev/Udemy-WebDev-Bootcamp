@@ -1,8 +1,10 @@
 // Dependencies
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
+const encrypt = require("mongoose-encryption");
 
 /*
 =====================
@@ -51,6 +53,14 @@ const userSchema = new mongoose.Schema({
     }
 });
 
+// Add encrypt package as a plugin
+// - Encrypt using the secret string
+// - Encrypt only the password
+userSchema.plugin(encrypt, { 
+    secret: process.env.MONGOOSE_SECRET,
+    encryptedFields: ["password"]
+});
+
 // Article model
 const User = mongoose.model("User", userSchema);
 
@@ -95,6 +105,7 @@ app.post("/register", (req, res) => {
     });
 
     // Save the new user into the database
+    // (Encrypts password in the process)
     newUser.save((err) => {
         if (err) console.log(err);
         else res.render("secrets");
@@ -110,17 +121,28 @@ app.post("/login", (req, res) => {
     let password = req.body.password;
 
     // Check credentials against the database
+    // (Decrypts password in the process)
     User.findOne(
 
         // Find the user with the same credentials
-        { email: username, password: password },
+        { email: username},
 
         // Callback
         (err, foundUser) => {
             if (err) console.log(err);
             else {
-                if (foundUser.password === password) res.render("secrets");
-                else res.send("Email exists. Incorrect Password");
+
+                // If a matching user exists
+                // (Password only appears decrypted inside "foundUser")
+                if (foundUser) {
+                    console.log(foundUser);
+                    if (foundUser.password === password) res.render("secrets");
+                    else res.send("Email exists. Incorrect Password");
+                }
+                else {
+                    console.log("No matching user found");
+                    res.redirect("/");
+                }
             }
         }
     )
