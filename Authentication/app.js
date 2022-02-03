@@ -4,7 +4,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
+const session = require("express-session");
+const passport = require("passport");
+const passportLocalMongoose = require("passport-local-mongoose");
 
 /*
 =====================
@@ -24,8 +26,16 @@ app.set("view engine", "ejs");
 // Use body parser with UTF-8 encoding
 app.use(bodyParser.urlencoded({ extended: true}));
 
-// Number of salting rounds
-const saltRounds = 10;
+// Setup the session
+app.use(session({
+    secret: process.env.MONGOOSE_SECRET,
+    resave: false,
+    saveUninitialized: true
+}))
+
+// Initialize passport package and use passport to manage the session
+app.use(passport.initialize());
+app.use(passport.session());
 
 /*
 =====================
@@ -45,19 +55,25 @@ mongoose.connect("mongodb://localhost:27017/userDB", {
 });
 
 // User schema
+// (Password is not required. Passport will check if its missing)
 const userSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        required: true
-    },
-    password: {
-        type: String,
-        required: true
-    }
+    email: String,
+    password: String
 });
+
+// Add passport plugin to mongoose
+userSchema.plugin(passportLocalMongoose);
 
 // Article model
 const User = mongoose.model("User", userSchema);
+
+// Setup authentication strategy (Must be made after the mongoose setup)
+passport.use(User.createStrategy());
+
+// Serialize the user data (put data into a cookie) and
+// deserialize the user data (Get data out of the cookie)
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 /*
 =====================
@@ -80,6 +96,30 @@ app.get("/register", (req, res) => {
     res.render("register");
 })
 
+// GET: Secrets page
+app.get("/secrets", (req, res) => {
+
+    // Check if a user is already logged in or authenticated
+    // (This allows the user to navigate to "/secrets" directly without logging in)
+    if (req.isAuthenticated()) {
+        res.render("secrets");
+    }
+    else {
+        res.redirect("/login");
+    }
+    
+})
+
+// GET: Logout route
+app.get("/logout", (req, res) => {
+
+    // Logout the user and redirect him to the home page
+    // (Delete the session cookie)
+    req.logout();
+    res.redirect("/");
+
+})
+
 /*
 =====================
 POST REQUESTS
@@ -93,23 +133,22 @@ app.post("/register", (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
 
-    // The password is hashed multiple times using bcrypt
-    bcrypt.hash(password, saltRounds, (err, hash) => {
+    // Register the new user and return the created profile ("user")
+    User.register({username: username}, password, (err, user) => {
+        if (err) {
+            console.log(err);
+            res.redirect("/register");
+        }
+        else {
 
-        // Create a new user object
-        const newUser = new User({
-            email: username,
-            password: hash
-        });
-
-        // Save the new user into the database
-        // (Encrypts password in the process)
-        newUser.save((err) => {
-            if (err) console.log(err);
-            else res.render("secrets");
-        })
-
-    })
+            // Create a cookie with the login session
+            // NOTE: Very strange way to code this
+            passport.authenticate("local")(req, res, () => {
+                res.redirect("/secrets");
+            });
+        }
+    });
+    
 })
 
 // POST: Login page
@@ -119,33 +158,26 @@ app.post("/login", (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
 
-    // Check credentials against the database
-    User.findOne(
+    // Create a new user object
+    const user = new User({
+        username: username, 
+        password: password
+    });
 
-        // Find the user with the same credentials
-        { email: username },
+    // Login the user with passport
+    req.login(user, (err) => {
 
-        // Callback
-        (err, foundUser) => {
-            if (err) console.log(err);
-            else {
+        // Check if the entered user exists in the database
+        if (err) console.log(err);
+        else {
 
-                // If a matching user exists
-                if (foundUser) {
-
-                    // Use bcrypt to compare the current password with the hash in the DB
-                    bcrypt.compare(password, foundUser.password, (err, result) => {
-                        if (result) res.render("secrets");
-                        else console.log(err);
-                    }) 
-                }
-                else {
-                    console.log("No matching user found");
-                    res.redirect("/");
-                }
-            }
+            // Create a cookie with the login session
+            // NOTE: Very strange way to code this
+            passport.authenticate("local")(req, res, () => {
+                res.redirect("/secrets");
+            });
         }
-    )
+    })
 
 })
 
