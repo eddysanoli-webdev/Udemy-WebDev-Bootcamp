@@ -4,7 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
-const md5 = require("md5");
+const bcrypt = require("bcrypt");
 
 /*
 =====================
@@ -23,6 +23,9 @@ app.set("view engine", "ejs");
 
 // Use body parser with UTF-8 encoding
 app.use(bodyParser.urlencoded({ extended: true}));
+
+// Number of salting rounds
+const saltRounds = 10;
 
 /*
 =====================
@@ -86,40 +89,41 @@ POST REQUESTS
 // POST: Register new user
 app.post("/register", (req, res) => {
 
-    // Retrieve the data from the form body using body parser
-    // (We hash the password using md5)
+    // Retrieve credentials from the form body using body parser
     let username = req.body.username;
-    let password = md5(req.body.password);
+    let password = req.body.password;
 
-    // Create a new user object
-    const newUser = new User({
-        email: username,
-        password: password
-    });
+    // The password is hashed multiple times using bcrypt
+    bcrypt.hash(password, saltRounds, (err, hash) => {
 
-    // Save the new user into the database
-    // (Encrypts password in the process)
-    newUser.save((err) => {
-        if (err) console.log(err);
-        else res.render("secrets");
+        // Create a new user object
+        const newUser = new User({
+            email: username,
+            password: hash
+        });
+
+        // Save the new user into the database
+        // (Encrypts password in the process)
+        newUser.save((err) => {
+            if (err) console.log(err);
+            else res.render("secrets");
+        })
+
     })
-
 })
 
 // POST: Login page
 app.post("/login", (req, res) => {
 
     // Retrieve the data from the form body using body parser
-    // (Login password must be hashed to be correctly compared with the stored password)
     let username = req.body.username;
-    let password = md5(req.body.password);
+    let password = req.body.password;
 
     // Check credentials against the database
-    // (Decrypts password in the process)
     User.findOne(
 
         // Find the user with the same credentials
-        { email: username},
+        { email: username },
 
         // Callback
         (err, foundUser) => {
@@ -127,11 +131,13 @@ app.post("/login", (req, res) => {
             else {
 
                 // If a matching user exists
-                // (Password only appears decrypted inside "foundUser")
                 if (foundUser) {
-                    console.log(foundUser);
-                    if (foundUser.password === password) res.render("secrets");
-                    else res.send("Email exists. Incorrect Password");
+
+                    // Use bcrypt to compare the current password with the hash in the DB
+                    bcrypt.compare(password, foundUser.password, (err, result) => {
+                        if (result) res.render("secrets");
+                        else console.log(err);
+                    }) 
                 }
                 else {
                     console.log("No matching user found");
