@@ -156,14 +156,14 @@ app.get("/register", (req, res) => {
 // GET: Secrets page
 app.get("/secrets", (req, res) => {
 
-    // Check if a user is already logged in or authenticated
-    // (This allows the user to navigate to "/secrets" directly without logging in)
-    if (req.isAuthenticated()) {
-        res.render("secrets");
-    }
-    else {
-        res.redirect("/login");
-    }
+    // Search all users where the "secret" field is not equal ($ne) to null
+    User.find( {"secret": {$ne: null}}, (err, foundUsers) => {
+        if (err) console.log(err);
+        else {
+            if (foundUsers) res.render("secrets", {usersWithSecrets: foundUsers});
+            else console.log("Failed to find any secrets");
+        }
+    });
     
 })
 
@@ -175,7 +175,16 @@ app.get("/logout", (req, res) => {
     req.logout();
     res.redirect("/");
 
-})
+});
+
+// GET: Submit page
+app.get("/submit", (req, res) => {
+
+    // Only render the submit page if the user is authenticated
+    if (req.isAuthenticated()) res.render("submit");
+    else res.redirect("/login");
+    
+});
 
 // GET: Google auth
 // (Here, the callback itself consists of the "passport.authenticate" method)
@@ -276,7 +285,34 @@ app.post("/login", (req, res) => {
         }
     })
 
-})
+});
+
+// POST: Post a secret
+app.post("/submit", (req, res) => {
+
+    // Get the submitted secret
+    const submittedSecret = req.body.secret;
+
+    // Passport stores the user data inside the request
+    // We can access the user data by using "req.user"
+    console.log("ID of User: ", req.user.id);
+
+    // Retrieve the current user by its ID
+    User.findById(req.user.id, (err, foundUser) => {
+        if (err) console.log(err);
+        else {
+            if (foundUser) {
+
+                // Add secret to user, save the user data into the database
+                // and finally redirect to the secrets page.
+                foundUser.secret = submittedSecret;
+                foundUser.save( () => {
+                    res.redirect("/secrets");
+                })
+            }
+        }
+    });
+});
 
 
 /*
