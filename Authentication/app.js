@@ -1,5 +1,4 @@
 // Dependencies
-require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
@@ -7,6 +6,14 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const FacebookStrategy = require("passport-facebook").Strategy;
+
+// Used to make the example in passport documentation "just work"
+const findOrCreate = require("mongoose-findorcreate");
+
+// Use .env files
+require("dotenv").config();
 
 /*
 =====================
@@ -26,12 +33,12 @@ app.set("view engine", "ejs");
 // Use body parser with UTF-8 encoding
 app.use(bodyParser.urlencoded({ extended: true}));
 
-// Setup the session
+// Setup the session for passport
 app.use(session({
-    secret: process.env.MONGOOSE_SECRET,
+    secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true
-}))
+    saveUninitialized: false
+}));
 
 // Initialize passport package and use passport to manage the session
 app.use(passport.initialize());
@@ -58,11 +65,15 @@ mongoose.connect("mongodb://localhost:27017/userDB", {
 // (Password is not required. Passport will check if its missing)
 const userSchema = new mongoose.Schema({
     email: String,
-    password: String
+    password: String,
+    googleID: String,
+    facebookID: String,
+    secret: String
 });
 
-// Add passport plugin to mongoose
+// Add plugins to current schema
 userSchema.plugin(passportLocalMongoose);
+userSchema.plugin(findOrCreate);
 
 // Article model
 const User = mongoose.model("User", userSchema);
@@ -70,10 +81,56 @@ const User = mongoose.model("User", userSchema);
 // Setup authentication strategy (Must be made after the mongoose setup)
 passport.use(User.createStrategy());
 
-// Serialize the user data (put data into a cookie) and
-// deserialize the user data (Get data out of the cookie)
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+// Serialize the user data (put data into a cookie)
+// (Modified to fit all authentication types, not only local auth like with "User.serializeUser()")
+passport.serializeUser( (user, done) => {
+    done(null, user.id);
+});
+
+// Deserialize the user data (Get data out of the cookie)
+passport.deserializeUser( (id, done) => {
+    User.findById(id, (err, user) => {
+        done(err, user);
+    });
+});
+
+/*
+=====================
+AUTHENTICATION STRATEGIES
+=====================
+*/
+
+// Setup Google Auth
+//  - Client ID: "username" for google cloud service access (create new credentials before)
+//  - Client Secret: "password" for google cloud service access
+//  - Callback URL: URL where the browser will redirect after the google auth
+//  - userProfileURL: Handle Google+ deprecation
+passport.use(new GoogleStrategy({
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: "http://localhost:3000/auth/google/secrets"
+    },
+    (accessToken, refreshToken, profile, cb) => {
+
+        // Find the existing user or create it (in case it doesnt work)
+        User.findOrCreate({ googleID: profile.id }, (err, user) => {
+            return cb(err, user);
+        });
+    }
+));
+
+// Setup Facebook Auth
+passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    callbackURL: "http://localhost:3000/auth/facebook/secrets"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ facebookID: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
 
 /*
 =====================
@@ -119,6 +176,46 @@ app.get("/logout", (req, res) => {
     res.redirect("/");
 
 })
+
+// GET: Google auth
+// (Here, the callback itself consists of the "passport.authenticate" method)
+app.get("/auth/google", 
+
+    // Authenticate with google and retrieve the profile info of the user
+    passport.authenticate("google", { scope: ["profile"] })
+
+);
+
+// GET: Secrets access after google login
+// (The callback consists of the "passport.authenticate" method)
+app.get("/auth/google/secrets",
+
+    // Authenticate the user. Redirect if the login process failed
+    // If successful, save the login session
+    passport.authenticate("google", { failureRedirect: "/login"}),
+
+    // If auth was successful, redirect to the secrets page
+    // (In "/secrets", we once again check if the user has been authenticated)
+    (req, res) => {
+        res.redirect("/secrets");
+    }
+);
+
+// GET: Facebook auth
+app.get('/auth/facebook',
+    passport.authenticate('facebook')
+);
+
+// GET: Secrets access after Facebook login
+app.get('/auth/facebook/secrets',
+    passport.authenticate('facebook', { failureRedirect: '/login' }),
+
+    // Successful authentication, redirect to "secrets"
+    (req, res) => {
+        res.redirect('/secrets');
+    }
+);
+
 
 /*
 =====================
