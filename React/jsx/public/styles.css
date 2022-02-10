@@ -1,0 +1,21 @@
+.heading {
+    font-size: 50px;
+    font-weight: bold;
+    border-bottom: 5px solid black;
+}
+
+.images {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-gap: 10px;
+}
+
+.images img {
+    width: 45vw;
+    aspect-ratio: 16/9;
+}
+
+ul {
+    color: blue;
+}

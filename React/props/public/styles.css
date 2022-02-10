@@ -1,0 +1,44 @@
+
+body {
+    text-align: center;
+    background-color: #EEE6CE;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.contacts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.card {
+    background: linear-gradient(to bottom, #B8405E 50%, #313552 50%);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1rem;
+    box-shadow: 0 5px 10px #a19c8b;
+    text-align: left;
+
+    color: #EEE6CE;
+
+    /* Two columns */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.card h2 {
+    font-weight: 500;
+    font-size: 2rem;
+}
+
+.card .details {
+    line-height: 0.8rem;
+}
+
+.card img {
+    border-radius: 100%;
+    outline: 10px solid #6B1B2F;
+    position: relative;
+    width: 50%;
+    left: 80px;
+    top: 20px;
+}
