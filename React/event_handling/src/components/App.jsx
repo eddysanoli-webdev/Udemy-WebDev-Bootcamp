@@ -41,20 +41,16 @@ const App = () => {
         // that changed, and the new value it has
         const {value, name} = event.target;
 
-        // Use the previous value of the name to set a new one
-        // (Tried to set only the property pertaining to the target name, but it slowed down
-        //  the entire website and only changed when hovering over the button with the mouse)
+        // Change the value of the field that changed
+        //  - Return a new object comprised of all the attributes from "prevValue"
+        //  - Modify the field with the name "name" with the new value
+        //  - Use square brackets around name to get the value of the variable and not only
+        //    the string "name" for the key value pair. Only valid with Babel
         setContact(prevValue => {
-
-            // Create a deep copy of the "prevValue" object
-            // (If you only assign a new variable the value of the object, both objects
-            //  reference the same variable, stalling the program. Here, no references 
-            //  are created)
-            const newVal = JSON.parse(JSON.stringify(prevValue));
-
-            // Change the previous value and return it
-            newVal[name] = value
-            return (newVal);
+            return {
+                ...prevValue,
+                [name]: value
+            };
         })
     }
 
