@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import ToDoItem from './ToDoItem';
 
 //CHALLENGE: Make this app work by applying what you've learnt.
 //1. When new text is written into the input, its state should be saved.
@@ -43,6 +44,15 @@ const App = () => {
         });
     }
 
+    // Delete To-Do List Item
+    const deleteItem = (id) => {
+
+        // Return all items, except the one that has the selected id
+        setList(prevItems => {
+            return prevItems.filter((item, index) => index !== id);
+        })
+    }
+
     // =======================
     // Render Output
 
@@ -71,7 +81,16 @@ const App = () => {
                 <ul>
 
                     {/* Iterate through every todo list item and render it */}
-                    {list.map(listItem => <li>{ listItem }</li>)}
+                    {list.map((listItem, index) => {
+                        return (
+                            <ToDoItem
+                                key={ index } 
+                                id={ index }
+                                listItem={ listItem }
+                                onChecked={ deleteItem }
+                            />
+                        );
+                    })}
                     
                 </ul>
             </div>
