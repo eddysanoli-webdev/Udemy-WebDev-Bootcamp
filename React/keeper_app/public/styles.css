@@ -73,6 +73,9 @@ CLASSES
 
 .content {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(4, 1fr);
+    grid-gap: 10px 20px;
+    justify-content: center;
+
+    /* The number of columns dynamically resizes to fit as many elements as possible */
+    grid-template-columns: repeat(auto-fill, 250px);
 }
