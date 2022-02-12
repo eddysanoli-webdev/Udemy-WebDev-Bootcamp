@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 
 const ToDoItem = (props) => {
 
+    // Stateful Crossed State
     const [crossed, setCrossed] = useState(false);
 
     return (
@@ -13,10 +14,16 @@ const ToDoItem = (props) => {
         <li 
             style={{textDecoration: crossed ? "line-through" : null}}
             onClick={ () => {
+
+                // Cross or uncross the item
                 setCrossed(crossed ? false : true);
 
+                // Delete the crossed item after half a second
+                // (The crossed state is not updated until the function finishes executing.
+                //  This means that we dont have to check for the crossed state to be true,
+                //  we have to check for it to be false, as it will then be changed to true)
                 setTimeout(() => {
-                    props.onChecked(props.id); 
+                    if (!crossed) props.onChecked(props.id); 
                 }, 500);
                 
             }}
