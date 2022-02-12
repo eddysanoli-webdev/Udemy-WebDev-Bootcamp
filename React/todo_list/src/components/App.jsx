@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import ToDoItem from './ToDoItem';
+import InputArea from './InputArea';
 
 //CHALLENGE: Make this app work by applying what you've learnt.
 //1. When new text is written into the input, its state should be saved.
@@ -10,34 +11,19 @@ import ToDoItem from './ToDoItem';
 const App = () => {
 
     // =======================
-    // Stateful variables:
-    // - newItem
-    const [newItem, setNewItem] = useState("");
+    // Stateful variables
     const [list, setList] = useState(["An Item"]);
 
     // =======================
     // Handling Functions
     // (Functions for handling app interactions)
 
-    // Text Input Change
-    const handleTextChange = (event) => {
-
-        // Get the new value from the text input
-        const {value} = event.target;
-
-        // Change the value of the stateful variable
-        return setNewItem(value)
-    }
-
     // "Add" Button Click
-    const handleBtnClick = (event) => {
+    const handleBtnClick = (newItem) => {
         setList(prevValue => {
 
             // Add the new item to the list of tasks
             const newList = [...prevValue, newItem];
-
-            // Reset the new item text input
-            setNewItem("");
 
             // Return the new list
             return newList;
@@ -64,17 +50,8 @@ const App = () => {
                 <h1>To-Do List</h1>
             </div>
 
-            {/* Form */}
-            <div className="form">
-                <input 
-                    type="text"
-                    onChange={ handleTextChange }
-                    value={newItem}
-                />
-                <button onClick={ handleBtnClick }>
-                    <span>Add</span>
-                </button>
-            </div>
+            {/* Input Area */}
+            <InputArea onBtnClick={handleBtnClick}/>
 
             {/* List */}
             <div>
